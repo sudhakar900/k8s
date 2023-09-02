@@ -38,6 +38,7 @@ Step 6: Install a Pod Network (Master Node)
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 Step 7: Join Worker Nodes to the Cluster
+Note : After running kubeadm init - you will get the below join command on Cmd 
 
 sudo kubeadm join <master-node-ip>:<master-node-port> --token <token> --discovery-token-ca-cert-hash <hash>
 
