@@ -1,0 +1,57 @@
+Steps to install K8s Master & nodes also establish connection between them !
+
+Step 1: Install Docker
+
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
+
+Step 2: Install Kubernetes Components
+
+sudo apt update
+sudo apt install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo systemctl enable kubelet
+sudo systemctl start kubelet
+
+Step 3: Disable Swap (All Nodes)
+
+sudo swapoff -a
+
+Step 4: Initialize the Kubernetes Master Node 
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+Step 5: Set Up Kubernetes Configuration (Master Node)
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+Step 6: Install a Pod Network (Master Node)
+
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+Step 7: Join Worker Nodes to the Cluster
+
+sudo kubeadm join <master-node-ip>:<master-node-port> --token <token> --discovery-token-ca-cert-hash <hash>
+
+example : sudo kubeadm join 172.31.42.212:6443 --token qvxlai.bey9x96kq6ntaj5y --discovery-token-ca-cert-hash sha256:906a1bf48543c5bebe7e9a61f96ed8d49be56696c1c18ad70a69b714226da666
+
+Note : Remove the backslash & spaces as shown above , copy paste in all nodes to connect to K8s master 
+
+Step 8: Verify the Cluster (Master Node)
+
+kubectl get nodes
+
+
+
+
+
+
+
